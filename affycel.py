@@ -3,6 +3,9 @@ import csv, os, glob
 import sys
 import numpy
 
+#running this will import the example.cel file
+# It is the way for testing
+
 class affycel:
     def _int_(self, filename, version, header, intensityCells, intensity, maskscells, masks, outlierCells, outliers, modifiedCells, modified):
         self.filename = filename
@@ -130,4 +133,4 @@ class affycel:
 
         
 a = affycel()
-a.read_cel("/Users/vmd/Dropbox/dna/data/1g_A9AF-1.CEL")
+a.read_cel("example.CEL")
