@@ -1,0 +1,160 @@
+This can be seen at:
+http://www.stat.lsa.umich.edu/~kshedden/Courses/Stat545/Notes/AffxFileFormats/
+
+CDF FILE
+	
+Description
+The CDF file describes the layout for an Affymetrix GeneChip array. There are two formats of this file, the first is an ASCII text format used by the MAS and GCOS 1.0 software and the second is a binary format used by later versions of GCOS - this format is also referred to as the XDA format.
+
+ASCII Text Format
+The format of this CDF file is an ASCII text file similar to the Windows INI format.
+
+The file is divided up into sections. The start of each section is defined by a line containing a section name enclosed in square braces. The section names are: "CDF", "Chip", "QCI" (where I ranges from 1 to the number of QC probe sets, "UnitJ" (where J is an internal index to uniquely distinguish probe sets),  and "UnitJ_BlockK" (where J and K are internal indicies used to distinguish subsets of a probe set). The data in each section is of the format TAG=VALUE.
+
+The "CDF" section contains the version number of the file. The TAGS are:
+TAG	Description
+Version	The version number. Should always be set to "GC1.0", "GC2.0" or "GC3.0". This document only describes GC3.0 version CDF files.
+
+The "Chip" section contains the following TAGS:
+TAG	Description
+Name	This item is not used by the software.
+Rows	The number of rows of cells on the array.
+Cols	The number of columns of cells on the array.
+NumberOfUnits	The number of units in the array not including QC units. The term unit is an internal term which means probe set.
+MaxUnit	Each unit is given a unique number. This value is the maximum of the unit numbers of all the units in the array (not including QC units).
+NumQCUnits	The number of QC units. QC units are defined in version 2 and above.
+ChipReference	Used for CustomSeq, HIV and P53 arrays only. This is the reference sequence displayed by the Affymetrix software. The sequence may contain spaces. This value is defined for version 2 and above.
+
+The next set of sections where the name begins with "QC" define the QC units or probe sets in the array. There are NumQCUnits (from the Chip section) QC sections. Each section name is a combination of "QC" and an index ranging from 1 to NumQCUnits-1. QC units are defined for version 2 and above. Each section contains the following TAGS:
+TAG	Description
+Type	Defines the type of QC probe set. The defined types are:
+
+0 - Unknown
+1 - Checkerboard Negative
+2 - Checkerboard Positive
+3 - Hybridization Negative
+4 - Hybridization Positive
+5 - Text Features Negative
+6 - Text Features Positive
+7 - Central Negative
+8 - Central Positive
+9 - Gene Expression Negative
+10 - Gene Expression Positive
+11 - Cycle Fidelity Negative
+12 - Cycle Fidelity Positive
+13 - Central Cross Negative
+14 - Central Cross Positive
+15  Cross Hyb Negative
+16  Cross Hyb Positive
+NumberCells	The number of cells in the probe set.
+CellHeader	Defines the data contained in the subsequent lines, separated by tabs. The value depends on the type of unit. The possible values are:
+
+X - The X coordinate of the cell.
+Y - The Y coordinate of the cell.
+PROBE - The probe sequence of the cell. Typically set to "N".
+PLEN - The number of bases in the probe sequence.
+ATOM - An index used to group multiple cells.
+INDEX - An index used to look up the corresponding cell data in the CEL file.
+MATCH - A boolean flag indicating a perfect match probe.
+BG - A boolean flag indicating a background (blank) cell.
+CYCLES - This item is always a list of 0's separated by a tab. There are as many 0's as number of bases in the probe sequence (PLEN).
+Celli	This contains the information about a cell that belongs to the probe set. The value of i in the tag ranges from 1 to the number of cells in the probe set. The values in each line depend on the CellHeader. The values are separated by tabs.
+
+The next set of sections where the name begins with "Unit" define the probes that are a member of the unit (probe set). Each probe set is divided into subsections termed "Blocks" which are referred to as "groups" in the Files SDK documentation. A group will list the probes as its members. For expression probe sets there is 1 and only 1 group per probe set. Each section name is a combination of "Unit" and an index. There is no meaning to the index value. Immediately following the "Unit" section there will be the "Block" sections for that unit before the next unit is defined. Each "Unit" section contains the following TAGS:
+TAG	Description
+Name	The name of the unit or "NONE" for expression units.
+Direction	Defines if the probes are interrogating a sense target or anti-sense target (1 - sense, 2 - anti-sense).
+NumAtoms	The number of atoms (probe pairs for expression and genotyping and probe quartets for CustomSeq) in the entire probe set. This TAG name contain two values after the equal sign. The first is the number of atoms and the second (if found) is the number of cells in each atom. It is assumed that there are 2 cells per atom for expression probe sets and 4 for CustomSeq probe sets.
+NumCells	The number of cells in the entire probe set.
+UnitNumber	An arbitrary index value for the probe set.
+UnitType	Defines the type of unit (1 - CustomSeq, 2 - genotyping, 3 - expression, 7 - tag/GenFlex).
+NumberBlocks	The number of blocks or groups in the probe set.
+MutationType	Used for CYP450 arrays only in defining the type of polymorphism (0 - substitution, 1 - insertion, 2 - deletion). This value is available in version 2 and above and only if the UnitType=2.
+
+After the "Unit" section follows the  "Unit_Block" sections. There are as many "Unit_Block" sections as defined in the "Unit" section. The TAGS are:
+TAG	Description
+Name	The name of the block. For expression units this is the name of the probe set.
+BlockNumber	An index to the block.
+NumAtoms	The number of atoms (probe pairs for expression and genotyping and probe quartets for CustomSeq) in the block.
+NumCells	The number of cells in the block.
+StartPosition	The position of the first atom.
+StopPosition	The position of the last atom.
+Direction	Defines if the probes are interrogating a sense target or anti-sense target (0 - no direction, 1 - sense, 2 - anti-sense). This value is available in version 3 and above.
+CellHeader	Defines the data contained in the subsequent lines, separated by tabs. The values are:
+
+X - The X coordinate of the cell.
+Y - The Y coordinate of the cell.
+PROBE - The probe sequence of the cell. Typically set to "N".
+FEAT - Unused string.
+QUAL - The same as the block name.
+EXPOS - Ranges from 0 to the number of atoms - 1 for expression arrays. For CustomSeq it provides some positional information for the probe.
+POS - An index to the base position within the probe where the mismatch occurs.
+CBASE - Not used.
+PBASE - The probe base at the substitution position.
+TBASE - The base of the target where the probe interrogates at the substitution position.
+ATOM - An index used to group probe pairs or quartets.
+INDEX - An index used to look up the corresponding cell data in the CEL file.
+CODONIND - Always set to -1. Only available in version 2 and above.
+CODON -Always set to -1. Only available in version 2 and above.
+REGIONTYPE - Always set to 99. Only available in version 2 and above.
+REGION - Always set to a blank character. Only available in version 2 and above.
+Celli	This contains the information about a cell that belongs to the block. The value of i in the tag ranges from 1 to the number of cells in the block. The values in each line depend on the CellHeader. The values are separated by tabs.
+
+XDA Format
+The format of this CDF file is an binary file created for faster access and smaller file size. The values in the file are stored in little-endian format.
+
+The file contents are define by:
+
+Item 	Description 	Type
+1 	Magic number. Always set to 67. 	integer
+2 	Version number. 	integer
+3 	The number of columns of cells on the array. 	unsigned short
+4 	The number of rows of cells on the array. 	unsigned short
+5 	The number of units in the array not including QC units. The term unit is an internal term which means probe set. 	integer
+6 	The number of QC units. 	integer
+7 	The length of the resequencing reference sequence. 	integer
+8 	The resequencing reference sequence. 	char[ length defined above]
+9 	The probe set (unit) name. 	char[64] * (# of units)
+10 	File position for the start of each QC unit information block. 	integer * (# of QC units)
+11 	File position for the start of each unit information block. 	integer * (# of units)
+12 	QC information, repeated for each QC unit:
+
+Type - unsigned short
+Number of probes - integer
+
+Probe information, repeated for each probe in the QC unit:
+X coordinate - unsigned short
+Y coordinate - unsigned short
+Probe length - unsigned char
+Perfect match flag - unsigned char
+Background probe flag - unsigned char
+	see description
+13 	Unit information, repeated for each unit:
+
+UnitType - unsigned short (1 - expression, 2 - genotyping, 3 - CustomSeq, 4 - tag)
+Direction - unsigned char
+Number of atoms - integer
+Number of blocks - integer (always 1 for expression units)
+Number of cells - integer
+Unit number (probe set number) - integer
+Number of cells per atom - unsigned char
+
+Block information, repeated for each block in the unit:
+
+Number of atoms - integer
+Number of cells - integer
+Number of cells per atom - unsigned char
+Direction - unsigned char
+The position of the first atom - integer
+<unused integer value> - integer
+The block name - char[64]
+
+Cell information, repeated for each cell in the block:
+
+Atom number - integer
+X coordinate - unsigned short
+Y coordinate - unsigned short
+Index position (relative to sequence for resequencing units, for expression and mapping units this value is just the atom number) - integer
+Base of probe at substitution position - char
+Base of target at interrogation position - char
+	see description
