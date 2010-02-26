@@ -122,10 +122,24 @@ class affycel:
         
         read_selector(reader)
 
-    
+    def simple_normilize(self):
+        """empty"""
+        
+    def cmean(self):
+        return numpy.mean(self.intensity['mean'])
+    def csum(self):
+        return numpy.sum(self.intensity['mean'])
+    def csumDobs(self):
+        return self.csum()/len(self.intensity['mean'])
+
+        
 if __name__ == "__main__": 
         a = affycel()
         a.read_cel('example.CEL')
+        print a.cmean()
+        print a.csum()
+        print a.csumDobs()
+        
         testlist = (a.filename, a.version, a.header.items(), a.intensityCells, a.intensity[:5], a.masksCells, a.masks, a.outliersCells, a.outliers[:5], a.modifiedCells, a.modified[:5])
         for test in testlist:
             print 'Test', test
