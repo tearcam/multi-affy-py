@@ -3,11 +3,6 @@ import csv, os, glob
 import sys
 import numpy
 
-#running this will import the example.cel file
-# It is the way for testing
-
-
-
 class affycel:
 
     def _int_(self, filename, version, header, intensityCells, intensity, maskscells, masks, outlierCells, outliers, modifiedCells, modified):
@@ -126,7 +121,8 @@ class affycel:
         rsel['[MODIFIED]']= Rmodified
         
         read_selector(reader)
-        
+
+    
 if __name__ == "__main__": 
         a = affycel()
         a.read_cel('example.CEL')
