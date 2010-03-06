@@ -64,7 +64,7 @@ class affycel:
                         if not any(("[CEL]" in row, "[HEADER]" in row, "[MASKS]" in row, "[OUTLIERS]" in row, "[MODIFIED]" in row)):
                             data.append(tuple(row))
                         else:
-                            self.intensity = numpy.array(data, [('x',int),('y',int),('mean',numpy.float64),('stdv',numpy.float64),('npixcels',int)])
+                            self.intensity = numpy.array(data, [('x',numpy.int),('y',numpy.int),('mean',numpy.float64),('stdv',numpy.float64),('npixcels',numpy.int)])
                             rsel[row[0]](row, areader)
             
         def Rmasks(row, areader):
@@ -80,7 +80,7 @@ class affycel:
                         
                         data.append(tuple(row))
                     else:
-                        self.masks = numpy.array(data, [('x',int),('y',int)])
+                        self.masks = numpy.array(data, [('x',numpy.int),('y',numpy.int)])
                         rsel[row[0]](row, areader)
             
         def Routliers(row, areader):
@@ -94,7 +94,7 @@ class affycel:
                     if not any(("[CEL]" in row, "[HEADER]" in row, "[INTESITY]" in row, "[MASKS]" in row, "[MODIFIED]" in row)):
                         data.append(tuple(row))
                     else:
-                        self.outliers = numpy.array(data, [('x', int), ('y', int)])
+                        self.outliers = numpy.array(data, [('x', numpy.int), ('y', numpy.int)])
                         rsel[row[0]](row, areader)
             
         def Rmodified(row, areader):
@@ -109,7 +109,7 @@ class affycel:
                         print 'modified1'
                         data.append(tuple(row))
                     #else, there is no else statment when there are now more rows continue on to convert data to array
-            self.modified = numpy.array(data, [('x', int), ('y', int), ('origmean', numpy.float64)] )
+            self.modified = numpy.array(data, [('x', numpy.int), ('y', numpy.int), ('origmean', numpy.float64)] )
             #rsel[row[0]](row, areader)  This should be the last item in the file
             
         rsel = {}
@@ -139,7 +139,6 @@ if __name__ == "__main__":
         print a.cmean()
         print a.csum()
         print a.csumDobs()
-        
         testlist = (a.filename, a.version, a.header.items(), a.intensityCells, a.intensity[:5], a.masksCells, a.masks, a.outliersCells, a.outliers[:5], a.modifiedCells, a.modified[:5])
         for test in testlist:
             print 'Test', test
