@@ -1,0 +1,2 @@
+"My first open source project"
+I need the ability to open multiple .cel files simultaneously (about 50). This can be a memory problem with standard python types. This project uses numpy.array for data storage and plan to use a db. The focus is on speed for large sets of arrays. At this time it is very utilitarian and could benifit from other. The plan is to merge this or update the biopython.affy. Nothing from with it jut wated something it didn't have.
